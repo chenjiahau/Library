@@ -1,4 +1,11 @@
-(function (global, $) {
+(function (global) {
+  var sec = {
+    year: 60 * 60 * 24 * 465,
+    month: 60 * 60 * 24 * 30,
+    day: 60 * 60 * 24,
+    minute: 60,
+  };
+
   function transformParameter(year, month, day, hour, minute) {
     year = parseInt(year);
     month = parseInt(month);
@@ -20,13 +27,17 @@
   };
 
   Calendar.prototype = {
+    setFrom: function (year, month, day, hour, minute) {
+      Calendar.init.apply(this, [year, month, day, hour, minute]);
+      return this;
+    },
     setTo: function (year, month, day, hour, minute) {
       var parameter = transformParameter(year, month, day, hour, minute);
 
       if (parameter.year && parameter.month && parameter.day) {
-        this.toDate = new Date(
+        this.to = new Date(
           parameter.year,
-          parameter.month,
+          parameter.month - 1,
           parameter.day,
           parameter.hour,
           parameter.minute
@@ -34,6 +45,53 @@
       }
 
       return this;
+    },
+    diff: function (unit) {
+      unit = unit.toLowerCase();
+      var toTimestampe = this.to.getTime();
+      var fromTimestampe = this.from.getTime();
+
+      if (unit === "year" || unit === "y") {
+        return Math.floor((toTimestampe - fromTimestampe) / 1000 / sec.year);
+      } else if (unit === "month" || unit === "m") {
+        return Math.floor((toTimestampe - fromTimestampe) / 1000 / sec.month);
+      } else if (unit === "day" || unit === "d") {
+        return Math.floor((toTimestampe - fromTimestampe) / 1000 / sec.day);
+      } else if (unit === "minute" || unit === "min") {
+        return Math.floor((toTimestampe - fromTimestampe) / 1000 / sec.minute);
+      } else {
+        return Math.floor((toTimestampe - fromTimestampe) / 1000);
+      }
+    },
+    diffYear: function () {
+      var toTimestampe = this.to.getTime();
+      var fromTimestampe = this.from.getTime();
+
+      return Math.floor((toTimestampe - fromTimestampe) / 1000 / sec.year);
+    },
+    diffMonth: function () {
+      var toTimestampe = this.to.getTime();
+      var fromTimestampe = this.from.getTime();
+
+      return Math.floor((toTimestampe - fromTimestampe) / 1000 / sec.month);
+    },
+    diffDay: function () {
+      var toTimestampe = this.to.getTime();
+      var fromTimestampe = this.from.getTime();
+
+      return Math.floor((toTimestampe - fromTimestampe) / 1000 / sec.day);
+    },
+    diffMinute: function () {
+      var toTimestampe = this.to.getTime();
+      var fromTimestampe = this.from.getTime();
+
+      return Math.floor((toTimestampe - fromTimestampe) / 1000 / sec.minute);
+    },
+    diffSecond: function () {
+      var toTimestampe = this.to.getTime();
+      var fromTimestampe = this.from.getTime();
+
+      return Math.floor((toTimestampe - fromTimestampe) / 1000);
     },
   };
 
